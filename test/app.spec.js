@@ -7,3 +7,11 @@ describe('App', () => {
       .expect(200, 'Hello, world!')
   })
 })
+
+describe('GET /api/*', () => {
+  it('GET /api/* responds with 200 and json OK: true', () => {
+    return supertest(app)
+      .get('/api/*')
+      .expect(200)
+  })
+})
