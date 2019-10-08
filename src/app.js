@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV, CLIENT_ORIGIN } = require('./config')
+const orgsRouter = require ('./orgs/orgs-router')
 
 const app = express()
 
@@ -19,9 +20,7 @@ app.use(
     })
 )
 
-app.get('/api/*', (req, res) => {
-    res.json({ok: true})
-})
+app.use('/api/orgs', orgsRouter)
 
 app.use(function errorHandler(error, req, res, next) {
     let response
