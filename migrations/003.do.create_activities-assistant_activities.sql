@@ -3,15 +3,15 @@ CREATE TABLE activities_activities (
     org_id INTEGER 
         REFERENCES activities_orgs(id) ON DELETE CASCADE NOT NULL,
     title TEXT NOT NULL,
-    day TEXT NOT NULL,
-    time TEXT NOT NULL,
+    activity_day TEXT NOT NULL,
+    activity_time TEXT NOT NULL,
     ages TEXT NOT NULL,
     activity_group TEXT NOT NULL,
-    location TEXT NOT NULL,
+    activity_location TEXT NOT NULL,
     cost INTEGER NOT NULL,
     dates TEXT NOT NULL,
     thumbnail TEXT NOT NULL,
-    description TEXT NOT NULL,
+    activity_description TEXT NOT NULL,
     preparation TEXT NOT NULL,
     contact TEXT NOT NULL
 );
