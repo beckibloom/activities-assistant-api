@@ -26,7 +26,6 @@ activitiesRouter
 
 activitiesRouter
   .route('/:org_id')
-  // .all(checkOrgExists)
   .post(requireAuth, jsonBodyParser, (req,res,next) => {
     const { id, org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, activity_description, preparation, contact } = req.body
     const newActivity = { id, org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, activity_description, preparation, contact }
