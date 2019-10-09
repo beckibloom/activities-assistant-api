@@ -1,6 +1,6 @@
 const express = require('express')
 const ActivitiesService = require('./activities-service')
-// const { requireAuth } = require('../middleware/jwt-auth')
+const { requireAuth } = require('../middleware/jwt-auth')
 
 const activitiesRouter = express.Router()
 
@@ -20,6 +20,32 @@ activitiesRouter
   .get((req,res) => {
     res.json(ActivitiesService.serializeActivity(res.activity)
     )
+  })
+
+activitiesRouter
+  .route('/:org_id')
+  // .all(checkOrgExists)
+  .post(requireAuth, jsonBodyParser, (req,res,next) => {
+    const { activity_id, org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, details } = req.body
+    const newActivity = { activity_id, org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, details }
+
+    for (const [key, value] of Object.entries(newActivity))
+      if (value == null)
+        return res.status(400).json({
+          error: `Missing '${key}' in request body`
+        })
+    
+    ActivitiesService.insertActivity(
+      req.app.get('db'),
+      newActivity
+    )
+      .then(activity => {
+        res
+          .status(201)
+          .location(path.posix.join(req.originalUrl, `/${activity.id}`))
+          .json(ActivitiesService.serializeActivity(activity))
+      })
+      .catch(next)
   })
 
 async function checkActivityExists(req, res, next) {

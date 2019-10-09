@@ -21,6 +21,7 @@ const ActivitiesService = {
         'contact'
       )
   },
+
   getActivitiesByOrg(db, org_id) {
     return db
       .from('activities_activities')
@@ -63,10 +64,22 @@ const ActivitiesService = {
       }
     }
   },
+
   getById(db,id) {
     return ActivitiesService.getAllActivities(db)
       .where('id', id)
       .first()
+  },
+
+  insertActivity(db, newActivity) {
+    return db
+      .insert(newActivity)
+      .into('activities_activities')
+      .returning('*')
+      .then(([activity]) => activity)
+      .then(activity =>
+        ActivitiesService.getById(db, activity.id)
+      )
   },
 }
 
