@@ -23,6 +23,7 @@ app.use(
 
 app.use('/api/orgs', orgsRouter)
 app.use('/api/activities', activitiesRouter)
+app.use('/api/activities', activitiesRouter)
 
 app.use(function errorHandler(error, req, res, next) {
     let response
