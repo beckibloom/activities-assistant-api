@@ -1,8 +1,10 @@
 const express = require('express')
+const path = require('path')
 const ActivitiesService = require('./activities-service')
 const { requireAuth } = require('../middleware/jwt-auth')
 
 const activitiesRouter = express.Router()
+const jsonBodyParser = express.json()
 
 activitiesRouter
   .route('/:org_id')
@@ -26,8 +28,8 @@ activitiesRouter
   .route('/:org_id')
   // .all(checkOrgExists)
   .post(requireAuth, jsonBodyParser, (req,res,next) => {
-    const { activity_id, org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, details } = req.body
-    const newActivity = { activity_id, org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, details }
+    const { id, org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, activity_description, preparation, contact } = req.body
+    const newActivity = { id, org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, activity_description, preparation, contact }
 
     for (const [key, value] of Object.entries(newActivity))
       if (value == null)
@@ -42,7 +44,7 @@ activitiesRouter
       .then(activity => {
         res
           .status(201)
-          .location(path.posix.join(req.originalUrl, `/${activity.id}`))
+          .location(path.posix.join(req.originalUrl, `${activity.id}`))
           .json(ActivitiesService.serializeActivity(activity))
       })
       .catch(next)
