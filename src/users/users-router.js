@@ -1,4 +1,5 @@
-const UsersService = require('/users-service')
+const express = require('express')
+const UsersService = require('./users-service')
 
 const usersRouter = express.Router()
 const jsonBodyParser = express.json()
@@ -22,7 +23,7 @@ usersRouter
       req.app.get('db'),
       user_name
     )
-      .then(hasUserWithUsername => {
+      .then(hasUserWithUserName => {
         if (hasUserWithUserName)
           return res.status(400).json({ error: `Username already taken` })
 
@@ -41,7 +42,7 @@ usersRouter
             .then(user => {
               res
                 .status(201)
-                .location(path.posix.join(req.originalUrl, `/${user.id}`))
+                // .location(path.posix.join(req.originalUrl, `/${user.id}`))
                 .json(UsersService.serializeUser(user))
             })
           })

@@ -6,6 +6,7 @@ const helmet = require('helmet')
 const { NODE_ENV, CLIENT_ORIGIN } = require('./config')
 const orgsRouter = require('./orgs/orgs-router')
 const activitiesRouter = require('./activities/activities-router')
+const usersRouter = require('./users/users-router')
 
 const app = express()
 
@@ -23,7 +24,7 @@ app.use(
 
 app.use('/api/orgs', orgsRouter)
 app.use('/api/activities', activitiesRouter)
-app.use('/api/activities', activitiesRouter)
+app.use('/api/users', usersRouter)
 
 app.use(function errorHandler(error, req, res, next) {
     let response
