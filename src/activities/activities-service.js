@@ -1,6 +1,26 @@
 const xss = require('xss')
 
 const ActivitiesService = {
+  getAllActivities(db) {
+    return db
+      .from('activities_activities')
+      .select(
+        'id',
+        'org_id',
+        'title',
+        'activity_day',
+        'activity_time',
+        'ages',
+        'activity_group',
+        'activity_location',
+        'cost',
+        'dates',
+        'thumbnail',
+        'activity_description',
+        'preparation',
+        'contact'
+      )
+  },
   getActivitiesByOrg(db, org_id) {
     return db
       .from('activities_activities')
@@ -42,7 +62,12 @@ const ActivitiesService = {
         contact: xss(activity.contact)
       }
     }
-  }
+  },
+  getById(db,id) {
+    return ActivitiesService.getAllActivities(db)
+      .where('id', id)
+      .first()
+  },
 }
 
 module.exports = ActivitiesService
