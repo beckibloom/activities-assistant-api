@@ -4,7 +4,6 @@ const ActivitiesService = {
   getActivitiesByOrg(db, org_id) {
     return db
       .from('activities_activities')
-      .where('org_id', org_id)
       .select(
         'id',
         'org_id',
@@ -21,6 +20,7 @@ const ActivitiesService = {
         'preparation',
         'contact'
       )
+      .where('org_id', org_id)
   },
 
   serializeActivity(activity) {
