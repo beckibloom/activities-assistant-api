@@ -23,6 +23,16 @@ activitiesRouter
     res.json(ActivitiesService.serializeActivity(res.activity)
     )
   })
+  .delete(requireAuth, (req,res,next) => {
+    ActivitiesService.deleteActivity(
+      req.app.get('db'),
+      req.params.activity_id
+    )
+      .then(numRowsAffected => {
+        res.status(204).end()
+      })
+      .catch(next)
+  })
 
 activitiesRouter
   .route('/:org_id')
