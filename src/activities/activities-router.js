@@ -33,6 +33,26 @@ activitiesRouter
       })
       .catch(next)
   })
+  .patch(jsonBodyParser, (req,res,next) => {
+    const { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, activity_description, preparation, contact } = req.body
+    const activityToUpdate = { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, activity_description, preparation, contact }
+
+    const numberOfValues = Object.values(activityToUpdate).filter(Boolean).length
+    if(numberOfValues === 0)
+      return res.status(400).json({
+        error:{message:`Request body must contain an activity object value to update`}
+      })
+
+    ActivitiesService.updateActivity(
+      req.app.get('db'),
+      req.params.activity_id,
+      activityToUpdate
+      )
+        .then(numRowsAffected => {
+          res.status(204).end()
+        })
+        .catch(next)
+  })
 
 activitiesRouter
   .route('/:org_id')
