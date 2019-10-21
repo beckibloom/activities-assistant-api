@@ -33,9 +33,9 @@ activitiesRouter
       })
       .catch(next)
   })
-  .patch(jsonBodyParser, (req,res,next) => {
-    const { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, activity_description, preparation, contact } = req.body
-    const activityToUpdate = { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, activity_description, preparation, contact }
+  .patch(requireAuth, jsonBodyParser, (req,res,next) => {
+    const { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, details } = req.body
+    const activityToUpdate = { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, details }
 
     const numberOfValues = Object.values(activityToUpdate).filter(Boolean).length
     if(numberOfValues === 0)
