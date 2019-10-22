@@ -27,9 +27,6 @@ const OrgsService = {
       .into('activities_orgs')
       .returning('*')
       .then(([org]) => org)
-      .then(org =>
-        ActivitiesService.getById(db, org.id)
-      )
   }
 }
 

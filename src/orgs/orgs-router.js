@@ -17,7 +17,7 @@ orgsRouter
     const { id, org_name } = req.body
     const newOrg = { id, org_name }
 
-    for (const [key, value] of Object.entries(newActivity))
+    for (const [key, value] of Object.entries(newOrg))
       if (value == null)
         return res.status(400).json({
           error: `Missing '${key}' in request body`
@@ -30,7 +30,6 @@ orgsRouter
       .then(org => {
         res
           .status(201)
-          .location(path.posix.join(req.originalUrl, `${org.id}`))
           .json(OrgsService.serializeOrgs(org))
       })
       .catch(next)
