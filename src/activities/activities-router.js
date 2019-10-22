@@ -57,8 +57,8 @@ activitiesRouter
 activitiesRouter
   .route('/:org_id')
   .post(/*requireAuth, */ jsonBodyParser, (req,res,next) => {
-    const { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, details } = req.body
-    const newActivity = { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, details }
+    const { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, activity_description, preparation, contact } = req.body
+    const newActivity = { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, activity_description, preparation, contact }
 
     for (const [key, value] of Object.entries(newActivity))
       if (value == null)
