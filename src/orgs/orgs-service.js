@@ -1,4 +1,5 @@
 const xss = require('xss')
+const ActivitiesService = require('../activities/activities-service')
 
 const OrgsService = {
   getAllOrgs(db) {
@@ -19,6 +20,17 @@ const OrgsService = {
       .where('id', id)
       .first()
   },
+
+  insertOrg(db, newOrg) {
+    return db
+      .insert(newOrg)
+      .into('activities_orgs')
+      .returning('*')
+      .then(([org]) => org)
+      .then(org =>
+        ActivitiesService.getById(db, org.id)
+      )
+  }
 }
 
 module.exports = OrgsService
