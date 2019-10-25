@@ -14,8 +14,8 @@ orgsRouter
       .catch(next)
   })
   .post(jsonBodyParser, (req,res,next) => {
-    const { id, org_name } = req.body
-    const newOrg = { id, org_name }
+    const { org_name } = req.body
+    const newOrg = { org_name }
 
     for (const [key, value] of Object.entries(newOrg))
       if (value == null)
