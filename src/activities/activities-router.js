@@ -33,7 +33,7 @@ activitiesRouter
       })
       .catch(next)
   })
-  .patch( /*requireAuth,*/ jsonBodyParser, (req,res,next) => {
+  .patch(requireAuth, jsonBodyParser, (req,res,next) => {
     const { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, details } = req.body
     const activityToUpdate = { org_id, title, activity_day, activity_time, ages, activity_group, activity_location, cost, dates, thumbnail, details }
 
