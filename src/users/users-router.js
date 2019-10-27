@@ -26,6 +26,7 @@ usersRouter
   })
   .post('/:org_id', jsonBodyParser, (req,res,next) => {
     const { password, user_name  } = req.body
+    const org_id = req.params.org_id
 
     for (const field of ['user_name', 'password'])
       if (!req.body[field])
@@ -51,7 +52,7 @@ usersRouter
             const newUser = {
               user_name,
               password: hashedPassword,
-              org_id: req.params.org_id,
+              org_id: org_id,
             }
 
             return UsersService.insertUser(
