@@ -11,7 +11,7 @@ const authRouter = require('./auth/auth-router')
 
 const app = express()
 
-const morganOption = (NODE_ENV === 'production')
+const morganOption = (process.env.NODE_ENV === 'production')
   ? 'tiny'
   : 'common';
 
@@ -19,7 +19,7 @@ app.use(morgan(morganOption))
 app.use(helmet())
 app.use(
     cors({
-        // origin: CLIENT_ORIGIN
+        origin: CLIENT_ORIGIN
     })
 )
 
