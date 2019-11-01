@@ -31,10 +31,10 @@ app.use('/api/auth', authRouter)
 app.use(function errorHandler(error, req, res, next) {
     let response
     if (NODE_ENV === 'production') {
-        response = { error: { message: "my server error" } }
+        response = { error: { message: "my server error NODE_ENV === production" } }
     } else {
-        console.error(error)
-        response = { message: error.message, error}
+        console.error('zen')
+        response = { message: error.message, error }
     }
     res.status(500).json(response)
 })
