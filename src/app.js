@@ -34,7 +34,7 @@ app.use(function errorHandler(error, req, res, next) {
         response = { error: { message: "my server error NODE_ENV === production" } }
     } else {
         console.error('zen')
-        response = { message: error.message, error }
+        response = { message: "hello error" }
     }
     res.status(500).json(response)
 })
