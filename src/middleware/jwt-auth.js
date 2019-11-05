@@ -23,8 +23,8 @@ function requireAuth(req,res,next) {
                 }
 
                 req.user = user
-                // including this response worked in development. testinc removing this response to see if it affects the production environment.
-                // res.status(201).json({status:`User found successfully`})
+                // including this response worked in development. testinc removing this response to see if it affects the production environment. It did not change the production environment.
+                res.status(201).json({status:`User found successfully`})
                 next()
             })
             .catch(err => {
