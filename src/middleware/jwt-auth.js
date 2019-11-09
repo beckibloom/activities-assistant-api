@@ -23,7 +23,7 @@ function requireAuth(req,res,next) {
                 }
 
                 req.user = user
-                // including this response worked in development. testinc removing this response to see if it affects the production environment. It did not change the production environment.
+                // including this response worked in development. testing removing this response to see if it affects the production environment. It did not change the production environment.
                 res.status(201).json({status:`User found successfully`})
                 next()
             })
@@ -32,6 +32,7 @@ function requireAuth(req,res,next) {
                 next(err)
             })
     } catch(error) {
+        console.log(error)
         res.status(401).json({ error: 'Unauthorized request, error' })
     }
 }
