@@ -4,5 +4,6 @@ module.exports = {
     CLIENT_ORIGIN: '',
     DATABASE_URL: process.env.DATABASE_URL || 'postgresql://becki_pg:password@localhost/activitiesassistant',
     JWT_SECRET: process.env.JWT_SECRET || 'AsMarcelProustWouldSay',
-    JWT_EXPIRY: process.env.JWT_EXPIRY || '1800s',
+    //configured to expire in 15 min
+    JWT_EXPIRY: '900000'
 }
