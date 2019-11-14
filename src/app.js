@@ -18,9 +18,7 @@ const morganOption = (process.env.NODE_ENV === 'production')
 app.use(morgan(morganOption))
 app.use(helmet())
 app.use(
-    cors({
-        origin: CLIENT_ORIGIN
-    })
+    cors()
 )
 
 app.use('/api/orgs', orgsRouter)
