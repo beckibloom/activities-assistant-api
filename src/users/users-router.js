@@ -8,7 +8,9 @@ const jsonBodyParser = express.json()
 
 usersRouter
   .get('/orgID',requireAuth, (req,res,next)=>{
-    res.send({org_id:req.user.org_id});
+    res
+      .status(201)
+      .json({org_id:req.user.org_id});
   })
   .get('/:username', jsonBodyParser, (req,res,next) => {
     const username = req.params.username
