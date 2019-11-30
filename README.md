@@ -1,27 +1,62 @@
-# Express Boilerplate!
+# Activities Assistant Server
 
-This is a boilerplate project used for starting new projects!
+## Table of Contents
 
-## Set up
+1. [Description](#Description)
+1. [API](#API)
+1. [Technologies](#Technologies)
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+[Live App](https://activities-assistant.beckibloom.now.sh/)
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-    (you may need to also `npm i nodemon -D` as nodemon has a history of not installing properly...)
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+## Description
 
-## Scripts
+Managing enrichment programs and choosing the best activities for your child can seem like a daunting task. With Activities Assistant, you can forget about mailing lists or paging through stacks of fliers. We make it easy to advertise your activities to your community, giving everyone a one-stop-shop to find just the right enrichment for their little ones.
 
-Start the application `npm start`
+As an activity coordinator, you can register for an account and add all of your activity information to your organization's Activity List. As a member of the community interested in attending activities, you can view the activities offered by your organization(s) of interest.
 
-Start nodemon for the application `npm run dev`
+> View the Client Repo for Activities Assistant [here](https://github.com/beckibloom/activities-assistant-client)
 
-Run the tests `npm test`
+## API
 
-## Deploying
+```
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+/api
+.
+--/activities
+  --GET
+    -/:org_id
+    -/:org_id/:activity_id
+  --DELETE
+    -/:org_id/:activity_id
+  --PUT
+    -/:org_id/:activity_id
+  --POST
+    -/:org_id
+--/auth
+    --POST
+      -/login
+--/orgs
+    --GET
+      -/
+    --POST
+      -/
+--/users
+    --GET
+      -/orgID
+      -/:username
+    --POST
+      -/:org_id
+
+```
+
+## Technologies
+
+- React
+- HTML
+- CSS
+- Node
+- Express
+- PostgreSQL
+- Mocha/Chai/Jest
+- Heroku/Now CLI
+- Zeit
