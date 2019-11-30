@@ -5,20 +5,20 @@ const OrgsService = {
   getAllOrgs(db) {
     return db
       .select('id', 'org_name')
-      .from('activities_orgs')
+      .from('activities_orgs');
   },
 
   serializeOrgs(org) {
     return {
       id: org.id,
       org_name: xss(org.org_name)
-    }
+    };
   },
 
   getById(db, id) {
     return OrgsService.getAllOrgs(db)
       .where('id', id)
-      .first()
+      .first();
   },
 
   insertOrg(db, newOrg) {
@@ -26,8 +26,8 @@ const OrgsService = {
       .insert(newOrg)
       .into('activities_orgs')
       .returning('*')
-      .then(([org]) => org)
-  }
-}
+      .then(([org]) => org);
+  },
+};
 
-module.exports = OrgsService
+module.exports = OrgsService;

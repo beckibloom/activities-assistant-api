@@ -8,7 +8,7 @@ const jsonBodyParser = express.json();
 
 usersRouter
   .get('/orgID', requireAuth, jsonBodyParser, (req,res,next)=>{
-    const orgId = req.user.org_id
+    const orgId = req.user.org_id;
 
     res
       .status(201)
@@ -20,7 +20,7 @@ usersRouter
     if (!username) {
       return res.status(400).json({
         error: 'Missing username in request'
-      })
+      });
     };
     
     UsersService.getUserOrg(
@@ -30,7 +30,7 @@ usersRouter
       .then(org_id => {
         res
           .status(201)
-          .json({ org_id })
+          .json({ org_id });
       });
   })
   .post('/:org_id', jsonBodyParser, (req,res,next) => {
@@ -45,16 +45,18 @@ usersRouter
     
     const passwordError = UsersService.validatePassword(password);
 
-    if (passwordError)
+    if (passwordError) {
       return res.status(400).json({ error: passwordError });
+    };
     
     UsersService.hasUserWithUserName(
       req.app.get('db'),
       user_name
     )
       .then(hasUserWithUserName => {
-        if (hasUserWithUserName)
-          return res.status(400).json({ error: `Username already taken` })
+        if (hasUserWithUserName) {
+          return res.status(400).json({ error: `Username already taken` });
+        };
 
         return UsersService.hashPassword(password)
           .then(hashedPassword => {
@@ -62,7 +64,7 @@ usersRouter
               user_name,
               password: hashedPassword,
               org_id: org_id,
-            }
+            };
 
             return UsersService.insertUser(
               req.app.get('db'),
@@ -71,11 +73,11 @@ usersRouter
             .then(user => {
               res
                 .status(201)
-                .json(UsersService.serializeUser(user))
+                .json(UsersService.serializeUser(user));
             });
           });
       })
-      .catch(next)
-  })
+      .catch(next);
+  });
 
 module.exports = usersRouter;

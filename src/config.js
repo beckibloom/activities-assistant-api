@@ -6,4 +6,4 @@ module.exports = {
     JWT_SECRET: process.env.JWT_SECRET || 'AsMarcelProustWouldSay',
     //configured to expire in 15 min
     JWT_EXPIRY: '900000'
-}
+};

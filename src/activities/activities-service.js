@@ -1,4 +1,4 @@
-const xss = require('xss')
+const xss = require('xss');
 
 const ActivitiesService = {
   getAllActivities(db) {
@@ -19,7 +19,7 @@ const ActivitiesService = {
         'activity_description',
         'preparation',
         'contact'
-      )
+      );
   },
 
   getActivitiesByOrg(db, org_id) {
@@ -41,7 +41,7 @@ const ActivitiesService = {
         'preparation',
         'contact'
       )
-      .where('org_id', org_id)
+      .where('org_id', org_id);
   },
 
   serializeActivity(activity) {
@@ -62,13 +62,13 @@ const ActivitiesService = {
         preparation: xss(activity.preparation),
         contact: xss(activity.contact)
       }
-    }
+    };
   },
 
   getById(db,id) {
     return ActivitiesService.getAllActivities(db)
       .where('id', id)
-      .first()
+      .first();
   },
 
   insertActivity(db, newActivity) {
@@ -79,20 +79,20 @@ const ActivitiesService = {
       .then(([activity]) => activity)
       .then(activity =>
         ActivitiesService.getById(db, activity.id)
-      )
+      );
   },
 
   deleteActivity(db, id) {
     return db('activities_activities')
       .where({id})
-      .delete()
+      .delete();
   },
 
   updateActivity(db, id, newActivityFields) {
     return db('activities_activities')
       .where({id})
-      .update(newActivityFields)
-  }
-}
+      .update(newActivityFields);
+  },
+};
 
-module.exports = ActivitiesService
+module.exports = ActivitiesService;
