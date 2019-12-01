@@ -1,17 +1,9 @@
 const app = require('../src/app');
 
 describe('App', () => {
-  it('GET / responds with 200 containing "Hello, world!"', () => {
+  it('GET / responds with 200 containing "Hello! Welcome to Activities Assistant."', () => {
     return supertest(app)
       .get('/')
-      .expect(200, 'Hello, world!')
-  })
-})
-
-describe('GET /api/*', () => {
-  it('GET /api/* responds with 200 and json OK: true', () => {
-    return supertest(app)
-      .get('/api/*')
-      .expect(200)
+      .expect(200, 'Hello! Welcome to Activities Assistant.')
   })
 })
