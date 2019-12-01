@@ -11,7 +11,7 @@ activitiesRouter
   .get((req,res,next) => {
     ActivitiesService.getActivitiesByOrg(req.app.get('db'), req.params.org_id)
       .then(activities => {
-        res.json(activities.map(ActivitiesService.serializeActivity));
+        res.status(201).json(activities.map(ActivitiesService.serializeActivity));
       })
     .catch(next);
   });
@@ -20,7 +20,7 @@ activitiesRouter
   .route('/:org_id/:activity_id')
   .all(checkActivityExists)
   .get((req,res) => {
-    res.json(ActivitiesService.serializeActivity(res.activity));
+    res.status(201).json(ActivitiesService.serializeActivity(res.activity));
   })
   .delete(requireAuth, (req,res,next) => {
     ActivitiesService.deleteActivity(

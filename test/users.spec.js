@@ -1,11 +1,12 @@
 require('dotenv').config();
 const app = require('../src/app');
 const supertest = require('supertest');
+const request = require('supertest');
 const knex = require('knex');
 const helpers = require('./test-helpers');
 const xss = require('xss');
 
-describe('Users Endpoints', () => {
+describe('Users Endpoints: Seeding database', () => {
   let db;
   const { testOrgs, testUsers, testActivities } = helpers.makeFixtures();
 
@@ -24,23 +25,22 @@ describe('Users Endpoints', () => {
   afterEach('cleanup', () => helpers.cleanTables(db));
 
   context('Given user is not authenticated', () => {
-    //helpers.seedUsersAndActivities not inserting properly
-    describe.skip(`GET /:username`, () => {
+    describe(`GET /:username`, () => {
       beforeEach('insert users', () => {
-        helpers.seedUsersAndActivities(db, testOrgs, testUsers, testActivities);
+        helpers.seedUsers(db, testOrgs, testUsers)
       })
 
-      it(`responds with 201 and user's associated org_id`, () => {
+      it.skip(`responds with 201 and user's associated org_id`, () => {
         const expectedUser = testUsers[0];
         const expectedOrgId = { org_id: testOrgs[0].id };
         return supertest(app)
-          .get(`/api/${expectedUser.user_name}`)
+          .get(`/api/users/${expectedUser.user_name}`)
           .expect(201, expectedOrgId)
       });
     });
 
     //not sure why this one isn't working. Maybe the testUser object is not created right? Server is expecting req.body with {password, user_name}. Or, perhaps helpers.makeFixtures() is not working as expected on line 10?
-    describe.skip(`POST /:org_id`, () => {
+    describe(`POST /:org_id`, () => {
       it(`creates a user, responding with 201 and user object`, () => {
         const testUser = {
           password: testUsers[0].password,
@@ -53,10 +53,9 @@ describe('Users Endpoints', () => {
           org_id: testUsers[0].org_id,
         };
         return supertest(app)
-          .post(`/api/${orgId}`)
+          .post(`/api/users/${orgId}`)
           .send(testUser)
-          .expect('Content-Type', 'text/html; charset=utf-8')
-          //Error: expected 201 "Created", got 404 "Not Found"
+          .expect('Content-Type', 'application/json; charset=utf-8')
           .expect(201)
           .expect(res => {
             db
@@ -82,6 +81,69 @@ describe('Users Endpoints', () => {
       it(`responds with 200 and user's associated org_id`, () => {
         //send authToken
         //response is expected user's org_id
+      });
+    });
+  });
+});
+
+describe.skip('Users Endpoints: Using existing database', () => {
+  const userCredentials = {
+    user_name: 'DemoUser',
+    password: 'HelloW0rld!'
+  };
+
+  let authToken;
+
+  const authenticatedUser = request.agent(app);
+
+  context('Given user has not been authenticated', () => {
+    const db = knex({
+      client: 'pg',
+      connection: process.env.TEST_DATABASE_URL,
+    });
+  
+    app.set('db', db);
+
+    describe('GET /:username', () => {
+      it(`responds with 201 and the expected user's orgId`, () => {
+
+      });
+    });
+
+    describe('POST /:orgId', () => {
+      it(`responds with 201 and the expected user object`, () => {
+
+      });
+    });
+  });
+
+  context('Given user has authenticated', () => {
+    const db = knex({
+      client: 'pg',
+      connection: process.env.CONNECTION_URL,
+    });
+  
+    app.set('db', db);
+
+    before((done) => {
+      authenticatedUser
+        .post('/api/login')
+        .send(userCredentials)
+        .end((err, response) => {
+          authToken = response.body.authToken;
+          done();
+        })
+    })
+
+    describe('GET /orgID', () => {
+      it('requires user to be authenticated', () => {
+        return supertest(app)
+          .get('/api/orgID')
+          .expect(400);
+      });
+
+      it(`responds with 201 and the expected user's orgId`, () => {
+
       });
     });
   });

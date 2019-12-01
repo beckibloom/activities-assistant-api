@@ -216,27 +216,27 @@ function seedOrgs(db, orgs) {
     })
 };
 
-function seedUsersAndActivities(db, orgs, users, activities) {
+
+function seedActivities(db, orgs, activities) {
+  return db.transaction(async trx => {
+    await seedOrgs(trx, orgs);
+    await trx
+      .insert(activities)
+      .into('activities_activities');
+    await trx.raw(
+      `SELECT setval
+      ('activities_activities_id_seq', ?)`
+      [activities[activities.length - 1].id], 
+    );
+  })
+};
+
+function seedUsers(db, orgs, users) {
   const preppedUsers = users.map(user => ({
     ...user,
     //Better to use .hash() or .hashSync() ?
     password: bcrypt.hash(user.password, 12)
   }))
-
-  // db.transaction(async trx => {
-  //   await seedOrgs(trx, orgs);
-  //   return trx
-  //     .insert(preppedUsers)
-  //     .into('activities_users')
-  // })
-  //   .then(users => {
-  //     trx.raw(
-  //       `SELECT setval('activities_users_id_seq, ?)`
-  //       [users[users.length - 1].id],
-  //     )
-  //   })
-  //   .catch(error => console.log({error}));
-
 
   return db.transaction(async trx => {
     await seedOrgs(trx, orgs);
@@ -248,13 +248,7 @@ function seedUsersAndActivities(db, orgs, users, activities) {
       ('activities_users_id_seq', ?)`
       [users[users.length - 1].id], 
     );
-    // await trx.into('activities_activities').insert(activities)
-    // await db.raw(
-    //   `SELECT setval
-    //   ('activities_activities_id_seq', ?)`
-    //   [activities[activities.length - 1].id], 
-    // )
-  })
+  });
 };
 
 module.exports = {
@@ -266,5 +260,6 @@ module.exports = {
   makeFixtures,
   cleanTables,
   seedOrgs,
-  seedUsersAndActivities,
+  seedUsers,
+  seedActivities,
 };
