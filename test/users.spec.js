@@ -6,7 +6,7 @@ const knex = require('knex');
 const helpers = require('./test-helpers');
 const xss = require('xss');
 
-describe('Users Endpoints: Seeding database', () => {
+describe('Users Endpoints', () => {
   let db;
   const { testOrgs, testUsers, testActivities } = helpers.makeFixtures();
 
@@ -30,7 +30,7 @@ describe('Users Endpoints: Seeding database', () => {
         helpers.seedUsers(db, testOrgs, testUsers)
       })
 
-      it.skip(`responds with 201 and user's associated org_id`, () => {
+      it(`responds with 201 and user's associated org_id`, () => {
         const expectedUser = testUsers[0];
         const expectedOrgId = { org_id: testOrgs[0].id };
         return supertest(app)
@@ -39,8 +39,11 @@ describe('Users Endpoints: Seeding database', () => {
       });
     });
 
-    //not sure why this one isn't working. Maybe the testUser object is not created right? Server is expecting req.body with {password, user_name}. Or, perhaps helpers.makeFixtures() is not working as expected on line 10?
     describe(`POST /:org_id`, () => {
+      beforeEach('insert orgs', () => {
+        helpers.seedOrgs(db, testOrgs);
+      });
+
       it(`creates a user, responding with 201 and user object`, () => {
         const testUser = {
           password: testUsers[0].password,
@@ -75,76 +78,44 @@ describe('Users Endpoints: Seeding database', () => {
   })
 
   context('Given user is authenticated', () => {
-    // // let authToken;
-    // // const authenticatedUser = request.agent(app);
-    describe(`GET /orgID`, () => {
-      it(`responds with 200 and user's associated org_id`, () => {
-        //send authToken
-        //response is expected user's org_id
-      });
-    });
-  });
-});
+    let authToken;
+    const userCredentials = {
+      user_name: testUsers[0].user_name,
+      password: testUsers[0].password
+    }
+    const authenticatedUser = request.agent(app);
 
-describe.skip('Users Endpoints: Using existing database', () => {
-  const userCredentials = {
-    user_name: 'DemoUser',
-    password: 'HelloW0rld!'
-  };
-
-  let authToken;
-
-  const authenticatedUser = request.agent(app);
-
-  context('Given user has not been authenticated', () => {
-    const db = knex({
-      client: 'pg',
-      connection: process.env.TEST_DATABASE_URL,
-    });
-  
-    app.set('db', db);
-
-    describe('GET /:username', () => {
-      it(`responds with 201 and the expected user's orgId`, () => {
-
-      });
-    });
-
-    describe('POST /:orgId', () => {
-      it(`responds with 201 and the expected user object`, () => {
-
-      });
-    });
-  });
-
-  context('Given user has authenticated', () => {
-    const db = knex({
-      client: 'pg',
-      connection: process.env.CONNECTION_URL,
-    });
-  
-    app.set('db', db);
-
-    before((done) => {
-      authenticatedUser
-        .post('/api/login')
-        .send(userCredentials)
-        .end((err, response) => {
-          authToken = response.body.authToken;
-          done();
-        })
+    before('insert users', () => {
+      helpers.seedUsers(db, testOrgs, testUsers);
     })
+    
+    describe(`GET /orgID`, () => {
 
-    describe('GET /orgID', () => {
-      it('requires user to be authenticated', () => {
+      // Log in is returning 400 as if user/password is incorrect or not found
+      before('Log in as user', (done) => {
+        authenticatedUser
+          .post('/api/auth/login')
+          .set('content-type', 'application/json')
+          .send(userCredentials)
+          .end((err, res) => {
+            authToken = res.authToken;
+            done();
+          });
+      });
+      
+      it('should require auth', () => {
         return supertest(app)
-          .get('/api/orgID')
-          .expect(400);
+          .get('/api/users/orgID')
+          .expect(401);
       });
 
-      it(`responds with 201 and the expected user's orgId`, () => {
-
+      it(`responds with 200 and user's associated org_id`, () => {
+        return authenticatedUser
+          .set('authorization', `bearer ${authToken}`)
+          .get('/api/users/orgID')
+          .expect(200, testUsers[0].org_id)
       });
+
     });
   });
 });
