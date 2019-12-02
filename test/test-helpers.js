@@ -22,19 +22,19 @@ function makeUsersArray(orgs) {
     {
       id: 1,
       user_name: "MySchoolUser",
-      password: bcrypt.hash("HelloW0rld!", 12),
+      password: "HelloW0rld!",
       org_id: orgs[0].id
     },
     {
       id: 2,
       user_name: "AnotherUser",
-      password: bcrypt.hash("H3lloWorld!", 12),
+      password: "H3lloWorld!",
       org_id: orgs[1].id
     },
     {
       id: 3,
       user_name: "ParkUser",
-      password: bcrypt.hash("He11oWorld!", 12),
+      password: "He11oWorld!",
       org_id: orgs[2].id
     },
   ];
@@ -232,10 +232,14 @@ function seedActivities(db, orgs, activities) {
 };
 
 function seedUsers(db, orgs, users) {
+  const preppedUsers = users.map(user => ({
+    ...user,
+    password: bcrypt.hashSync(user.password, 12)
+  }))
   return db.transaction(async trx => {
     await seedOrgs(trx, orgs);
     await trx
-      .insert(users)
+      .insert(preppedUsers)
       .into('activities_users');
     await trx.raw(
       `SELECT setval
