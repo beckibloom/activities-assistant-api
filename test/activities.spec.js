@@ -19,15 +19,7 @@ let authToken;
 
 const authenticatedUser = request.agent(app);
 
-function getFirstActivityId(db) {
-  return db
-    .from('activities_activities')
-    .where('org_id', 3)
-    .first('id');
-};
-
-
-describe.only('Activities Endpoint', () => {
+describe('Activities Endpoint', () => {
 
   before((done) => {
     authenticatedUser
