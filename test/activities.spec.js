@@ -19,6 +19,14 @@ let authToken;
 
 const authenticatedUser = request.agent(app);
 
+function getFirstActivityId(db) {
+  return db
+    .from('activities_activities')
+    .where('org_id', 3)
+    .first('id');
+};
+
+
 describe.only('Activities Endpoint', () => {
 
   before((done) => {
@@ -30,32 +38,8 @@ describe.only('Activities Endpoint', () => {
         done();
       })
   })
-
-  describe('POST /:org_id', () => { 
-    it('responds with 201 and the posted activity and its location', () => {
-      return authenticatedUser
-        .set('authorization', `bearer ${authToken}`)
-        .post('/api/activities/3')
-        .send({
-            org_id: 3,
-            title: "Basketball",
-            activity_day: "Monday",
-            activity_time: "3:30-4:45 PM",
-            ages: "6-8",
-            activity_group: "Athletics",
-            activity_location: "400 - Gym",
-            cost: 400,
-            dates: "August 27 to December 19",
-            thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Basketball_Clipart.svg/1035px-Basketball_Clipart.svg.png",
-            activity_description: "This activity is a great choice because it will help your child get out all their energy before you have to take them home and look after them. No more chasing them around after school to sit down at the dinner table - they will work up an appetite in no time, and have fun doing it! We will practice many amazing fitness skills, including X, Y, and Z, and we will also practice excellent teamwork and cooperation.",
-            preparation: "In preparation for participating in this activity, please plan to bring your PE kit or other comfortable athletic clothes and gym shoes to wear during activity.",
-            contact:"If you have any questions, please contact teacher@school.org for more information."
-        })
-        .expect('Content-Type', 'application/json; charset=utf-8')
-        .expect(201)
-    });
-  });
-
+  
+  // GET requests are public and test routes only make GET requests to org_id 1
   describe('GET /:org_id', () => {
     it('responds with 201 and all activities', () => {
       const expectedActivities = [ { id: 5,
@@ -198,6 +182,7 @@ describe.only('Activities Endpoint', () => {
     });
   });
 
+  // GET requests are public and test routes only make GET requests to org_id 1
   describe('GET /:org_id/:activity_id', () => {
     it('responds with 201 and the expected activity', () => {
       const expectedActivity = { 
@@ -227,48 +212,125 @@ describe.only('Activities Endpoint', () => {
     });
   });
 
-  describe('PUT /:org_id/:activity_id', () => {
+  //POST requests use requireAuth and should only interact with the org_id 3 (Becki_user)
+  describe('POST /:org_id', () => { 
+    it('responds with 201 and the posted activity and its location', () => {
+      return authenticatedUser
+        .set('authorization', `bearer ${authToken}`)
+        .post('/api/activities/3')
+        .send({
+            org_id: 3,
+            title: "Basketball",
+            activity_day: "Monday",
+            activity_time: "3:30-4:45 PM",
+            ages: "6-8",
+            activity_group: "Athletics",
+            activity_location: "400 - Gym",
+            cost: 400,
+            dates: "August 27 to December 19",
+            thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Basketball_Clipart.svg/1035px-Basketball_Clipart.svg.png",
+            activity_description: "This activity is a great choice because it will help your child get out all their energy before you have to take them home and look after them. No more chasing them around after school to sit down at the dinner table - they will work up an appetite in no time, and have fun doing it! We will practice many amazing fitness skills, including X, Y, and Z, and we will also practice excellent teamwork and cooperation.",
+            preparation: "In preparation for participating in this activity, please plan to bring your PE kit or other comfortable athletic clothes and gym shoes to wear during activity.",
+            contact:"If you have any questions, please contact teacher@school.org for more information."
+        })
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .expect(201)
+    });
+  });  
 
-    it.skip('requires the user to authenticate', () => {
+  //PUT requests use requireAuth and should only interact with the org_id 3 (Becki_user)
+  describe('PUT /:org_id/:activity_id', () => {
+    let activityId;
+
+    before((done) => {
+      authenticatedUser
+        .get('/api/activities/3')
+        .then((response) => {
+          activityId = response.body[0].id;
+          done();
+        })
+    })
+
+    it('requires the user to authenticate', () => {
       const updatedActivity = { 
-        id: 21,
-        orgId: 1,
-        title: '21 but make it fun',
-        day: 'Monday',
-        time: '3:30-4:45 PM',
-        ages: '9-11',
-        group: 'General Enrichment',
-        location: '510 - Ms. Covello\'s Room',
-        cost: 0,
-        dates: 'August 27 to December 19',
+        org_id: 3,
+        title: 'new title for activity id 21',
+        activity_day: 'Tuesday',
+        activity_time: '5-6 PM',
+        ages: '3-5',
+        activity_group: 'STEAM',
+        activity_location: 'Room 108',
+        cost: 50,
+        dates: 'Jan 6 to Apr 3',
         thumbnail:
-         'https://www.adazing.com/wp-content/uploads/2019/02/open-book-clipart-07-300x300.png',
+         'https://images.unsplash.com/photo-1452857297128-d9c29adba80b?ixlib=rb-1.2.1&w=1000&q=80',
         details: { 
-           description:
-            'This activity is a great choice because it will help your child finish their homework with the help of their peers and teachers. No more arguing at home over getting homework done - they will complete their work here at school, and feel encouraged to learn and grow! We will practice many amazing studying strategies, including X, Y, and Z, and we will also practice resilience and critical thinking.',
+           activity_description:
+            'This activity needs a new description.',
            preparation:
-            'In preparation for participating in this activity, please plan to bring your homework, planner, and writing utensil.',
+            'Here is some information about how to prepare.',
            contact:
-            'If you have any questions, please contact teacher@school.org for more information.' }};
+            'Do not contact me about this activity.' }};
 
       return supertest(app)
-        .put('/api/activities/1/21')
-        .expect(400);
+        .put(`/api/activities/3/${activityId}`)
+        .send(updatedActivity)
+        .expect(401);
     });
 
     it('responds with status 204 and activity has been successfully modified', () => {
+      const updatedActivity = { 
+        org_id: 3,
+        title: 'new title for activity id 21',
+        activity_day: 'Tuesday',
+        activity_time: '5-6 PM',
+        ages: '3-5',
+        activity_group: 'STEAM',
+        activity_location: 'Room 108',
+        cost: 50,
+        dates: 'Jan 6 to Apr 3',
+        thumbnail:
+         'https://images.unsplash.com/photo-1452857297128-d9c29adba80b?ixlib=rb-1.2.1&w=1000&q=80',
+        details: { 
+           activity_description:
+            'This activity needs a new description.',
+           preparation:
+            'Here is some information about how to prepare.',
+           contact:
+            'Do not contact me about this activity.' }};
 
+      return authenticatedUser
+        .set('authorization', `bearer ${authToken}`)
+        .put(`/api/activities/3/${activityId}`)
+        .send(updatedActivity)
+        .expect(204)
     });
   }); 
 
+  //DELETE requests use requireAuth and should only interact with the org_id 3 (Becki_user)
   describe('DELETE /:org_id/:activity_id', () => {
+    let activityIdToDelete;
+
+    before((done) => {
+      authenticatedUser
+        .get('/api/activities/3')
+        .then((response) => {
+          activityIdToDelete = response.body[0].id;
+          done();
+        })
+    })
 
     it('requires the user to authenticate', () => {
-
+      return supertest(app)
+        .delete(`/api/activities/1/${activityIdToDelete}`)
+        .expect(401);
     });
 
     it('responds with status 204 and activity is no longer in database', () => {
-
+      return authenticatedUser
+        .set('authorization', `bearer ${authToken}`)
+        .delete(`/api/activities/1/${activityIdToDelete}`)
+        .expect(204)
     });
   });
 });
