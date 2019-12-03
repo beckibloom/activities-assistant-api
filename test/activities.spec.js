@@ -6,14 +6,14 @@ const knex = require('knex');
 const db = knex({
   client: 'pg',
   connection: process.env.DATABASE_URL
-})
+});
 
-app.set('db', db)
+app.set('db', db);
 
 const userCredentials = {
   user_name: 'Becki_user',
   password: 'BeckisPassword!123'
-}
+};
 
 let authToken;
 
@@ -25,54 +25,235 @@ describe.only('Activities Endpoint', () => {
     authenticatedUser
       .post('/api/auth/login')
       .send(userCredentials)
-      .then((err, response) => {
+      .then((response) => {
         authToken = response.body.authToken;
-        console.log({authToken})
         done();
       })
   })
 
-  describe('POST /:org_id', () => {
+  describe('POST /:org_id', () => { 
     it('responds with 201 and the posted activity and its location', () => {
-      // return request(app)
-      //   .set('authorization', `bearer ${authToken}`)
-      //   .post('/api/activities/3')
-      //   .send({
-      //       org_id: 3,
-      //       title: "Basketball",
-      //       activity_day: "Monday",
-      //       activity_time: "3:30-4:45 PM",
-      //       ages: "6-8",
-      //       activity_group: "Athletics",
-      //       activity_location: "400 - Gym",
-      //       cost: 400,
-      //       dates: "August 27 to December 19",
-      //       thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Basketball_Clipart.svg/1035px-Basketball_Clipart.svg.png",
-      //       activity_description: "This activity is a great choice because it will help your child get out all their energy before you have to take them home and look after them. No more chasing them around after school to sit down at the dinner table - they will work up an appetite in no time, and have fun doing it! We will practice many amazing fitness skills, including X, Y, and Z, and we will also practice excellent teamwork and cooperation.",
-      //       preparation: "In preparation for participating in this activity, please plan to bring your PE kit or other comfortable athletic clothes and gym shoes to wear during activity.",
-      //       contact:"If you have any questions, please contact teacher@school.org for more information."
-      //   })
-      //   .expect('Content-Type', 'application/json; charset=utf-8')
-      //   .expect(201)
+      return authenticatedUser
+        .set('authorization', `bearer ${authToken}`)
+        .post('/api/activities/3')
+        .send({
+            org_id: 3,
+            title: "Basketball",
+            activity_day: "Monday",
+            activity_time: "3:30-4:45 PM",
+            ages: "6-8",
+            activity_group: "Athletics",
+            activity_location: "400 - Gym",
+            cost: 400,
+            dates: "August 27 to December 19",
+            thumbnail: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Basketball_Clipart.svg/1035px-Basketball_Clipart.svg.png",
+            activity_description: "This activity is a great choice because it will help your child get out all their energy before you have to take them home and look after them. No more chasing them around after school to sit down at the dinner table - they will work up an appetite in no time, and have fun doing it! We will practice many amazing fitness skills, including X, Y, and Z, and we will also practice excellent teamwork and cooperation.",
+            preparation: "In preparation for participating in this activity, please plan to bring your PE kit or other comfortable athletic clothes and gym shoes to wear during activity.",
+            contact:"If you have any questions, please contact teacher@school.org for more information."
+        })
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .expect(201)
     });
   });
 
   describe('GET /:org_id', () => {
     it('responds with 201 and all activities', () => {
-
+      const expectedActivities = [ { id: 5,
+        orgId: 1,
+        title: 'Science Club',
+        day: 'Tuesday',
+        time: '3:30-4:45 PM',
+        ages: '3-5',
+        group: 'STEAM',
+        location: '401 - Science',
+        cost: 400,
+        dates: 'August 27 to December 19',
+        thumbnail:
+         'http://images.clipartpanda.com/science-clip-art-c39d8747b92efcfb9921b0dc55d81c7f.jpg',
+        details:
+         { description:
+            'This activity is a great choice because it will encourage your childs curiosity about the world and engage their critical thinking. We will have fun doing experiments such as X, Y, and Z, and creating things like A, B, and C!',
+           preparation:
+            'In preparation for participating in this activity, please plan to bring a smock or old t-shirt to protect your childs uniform from getting messy with our experiments.',
+           contact:
+            'If you have any questions, please contact teacher@school.org for more information.' } },
+      { id: 3,
+        orgId: 1,
+        title: 'Chess is fun',
+        day: 'Thursday',
+        time: '3:30-4:45 PM',
+        ages: '6-8',
+        group: 'General Enrichment',
+        location: '310 - Ms. Arnotts Room',
+        cost: 350,
+        dates: 'August 27 to December 19',
+        thumbnail:
+         'https://us.123rf.com/450wm/mix3r/mix3r1505/mix3r150500315/40632827-stock-vector-chess-pieces-business-sign-corporate-identity-template-for-chess-club-or-chess-school-standard-chess.jpg?ver=6',
+        details:
+         { description:
+            'This activity is a great choice because it will help your child use critical thinking to solve complex problems. We will practice key strategies for playing this ancient game, including X, Y, and Z, and we will also practice teamwork and make friends.',
+           preparation:
+            'There is nothing to prepare before coming to this activity.',
+           contact:
+            'If you have any questions, please contact teacher@school.org for more information.' } },
+      { id: 1,
+        orgId: 1,
+        title: 'New Basketball',
+        day: 'Monday',
+        time: '3:30-4:45 PM',
+        ages: '6-8',
+        group: 'Athletics',
+        location: '400 - Gym',
+        cost: 400,
+        dates: 'August 27 to December 19',
+        thumbnail:
+         'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Basketball_Clipart.svg/1035px-Basketball_Clipart.svg.png',
+        details:
+         { description:
+            'This activity is a great choice because it will help your child get out all their energy before you have to take them home and look after them. No more chasing them around after school to sit down at the dinner table - they will work up an appetite in no time, and have fun doing it! We will practice many amazing fitness skills, including X, Y, and Z, and we will also practice excellent teamwork and cooperation.',
+           preparation:
+            'In preparation for participating in this activity, please plan to bring your PE kit or other comfortable athletic clothes and gym shoes to wear during activity.',
+           contact:
+            'If you have any questions, please contact teacher@school.org for more information.' } },
+      { id: 15,
+        orgId: 1,
+        title: 'hello new club',
+        day: 'Monday',
+        time: '3:30-4:45 PM',
+        ages: '9-11',
+        group: 'General Enrichment',
+        location: '510 - Ms. Covello\'s Room',
+        cost: 0,
+        dates: 'August 27 to December 19',
+        thumbnail:
+         'https://www.adazing.com/wp-content/uploads/2019/02/open-book-clipart-07-300x300.png',
+        details:
+         { description:
+            'This activity is a great choice because it will help your child finish their homework with the help of their peers and teachers. No more arguing at home over getting homework done - they will complete their work here at school, and feel encouraged to learn and grow! We will practice many amazing studying strategies, including X, Y, and Z, and we will also practice resilience and critical thinking.',
+           preparation:
+            'In preparation for participating in this activity, please plan to bring your homework, planner, and writing utensil.',
+           contact:
+            'If you have any questions, please contact teacher@school.org for more information.' } },
+      { id: 19,
+        orgId: 1,
+        title: 'another new club',
+        day: 'Monday',
+        time: '3:30-4:45 PM',
+        ages: '9-11',
+        group: 'General Enrichment',
+        location: '510 - Ms. Covello\'s Room',
+        cost: 0,
+        dates: 'August 27 to December 19',
+        thumbnail:
+         'https://www.adazing.com/wp-content/uploads/2019/02/open-book-clipart-07-300x300.png',
+        details:
+         { description:
+            'This activity is a great choice because it will help your child finish their homework with the help of their peers and teachers. No more arguing at home over getting homework done - they will complete their work here at school, and feel encouraged to learn and grow! We will practice many amazing studying strategies, including X, Y, and Z, and we will also practice resilience and critical thinking.',
+           preparation:
+            'In preparation for participating in this activity, please plan to bring your homework, planner, and writing utensil.',
+           contact:
+            'If you have any questions, please contact teacher@school.org for more information.' } },
+      { id: 20,
+        orgId: 1,
+        title: 'another new club1',
+        day: 'Monday',
+        time: '3:30-4:45 PM',
+        ages: '9-11',
+        group: 'General Enrichment',
+        location: '510 - Ms. Covello\'s Room',
+        cost: 0,
+        dates: 'August 27 to December 19',
+        thumbnail:
+         'https://www.adazing.com/wp-content/uploads/2019/02/open-book-clipart-07-300x300.png',
+        details:
+         { description:
+            'This activity is a great choice because it will help your child finish their homework with the help of their peers and teachers. No more arguing at home over getting homework done - they will complete their work here at school, and feel encouraged to learn and grow! We will practice many amazing studying strategies, including X, Y, and Z, and we will also practice resilience and critical thinking.',
+           preparation:
+            'In preparation for participating in this activity, please plan to bring your homework, planner, and writing utensil.',
+           contact:
+            'If you have any questions, please contact teacher@school.org for more information.' } },
+      { id: 21,
+        orgId: 1,
+        title: '21 but make it fun',
+        day: 'Monday',
+        time: '3:30-4:45 PM',
+        ages: '9-11',
+        group: 'General Enrichment',
+        location: '510 - Ms. Covello\'s Room',
+        cost: 0,
+        dates: 'August 27 to December 19',
+        thumbnail:
+         'https://www.adazing.com/wp-content/uploads/2019/02/open-book-clipart-07-300x300.png',
+        details: { 
+           description:
+            'This activity is a great choice because it will help your child finish their homework with the help of their peers and teachers. No more arguing at home over getting homework done - they will complete their work here at school, and feel encouraged to learn and grow! We will practice many amazing studying strategies, including X, Y, and Z, and we will also practice resilience and critical thinking.',
+           preparation:
+            'In preparation for participating in this activity, please plan to bring your homework, planner, and writing utensil.',
+           contact:
+            'If you have any questions, please contact teacher@school.org for more information.' } } ];
+      return authenticatedUser
+        .get('/api/activities/1')
+        .expect('Content-Type', 'application/json; charset=utf-8')
+        .expect(201, expectedActivities)
     });
   });
 
   describe('GET /:org_id/:activity_id', () => {
     it('responds with 201 and the expected activity', () => {
-      
+      const expectedActivity = { 
+        id: 21,
+        orgId: 1,
+        title: '21 but make it fun',
+        day: 'Monday',
+        time: '3:30-4:45 PM',
+        ages: '9-11',
+        group: 'General Enrichment',
+        location: '510 - Ms. Covello\'s Room',
+        cost: 0,
+        dates: 'August 27 to December 19',
+        thumbnail:
+         'https://www.adazing.com/wp-content/uploads/2019/02/open-book-clipart-07-300x300.png',
+        details: { 
+           description:
+            'This activity is a great choice because it will help your child finish their homework with the help of their peers and teachers. No more arguing at home over getting homework done - they will complete their work here at school, and feel encouraged to learn and grow! We will practice many amazing studying strategies, including X, Y, and Z, and we will also practice resilience and critical thinking.',
+           preparation:
+            'In preparation for participating in this activity, please plan to bring your homework, planner, and writing utensil.',
+           contact:
+            'If you have any questions, please contact teacher@school.org for more information.' }};
+       return authenticatedUser
+          .get('/api/activities/1/21')
+          .expect('Content-Type', 'application/json; charset=utf-8')
+          .expect(201, expectedActivity)
     });
   });
 
   describe('PUT /:org_id/:activity_id', () => {
 
-    it('requires the user to authenticate', () => {
+    it.skip('requires the user to authenticate', () => {
+      const updatedActivity = { 
+        id: 21,
+        orgId: 1,
+        title: '21 but make it fun',
+        day: 'Monday',
+        time: '3:30-4:45 PM',
+        ages: '9-11',
+        group: 'General Enrichment',
+        location: '510 - Ms. Covello\'s Room',
+        cost: 0,
+        dates: 'August 27 to December 19',
+        thumbnail:
+         'https://www.adazing.com/wp-content/uploads/2019/02/open-book-clipart-07-300x300.png',
+        details: { 
+           description:
+            'This activity is a great choice because it will help your child finish their homework with the help of their peers and teachers. No more arguing at home over getting homework done - they will complete their work here at school, and feel encouraged to learn and grow! We will practice many amazing studying strategies, including X, Y, and Z, and we will also practice resilience and critical thinking.',
+           preparation:
+            'In preparation for participating in this activity, please plan to bring your homework, planner, and writing utensil.',
+           contact:
+            'If you have any questions, please contact teacher@school.org for more information.' }};
 
+      return supertest(app)
+        .put('/api/activities/1/21')
+        .expect(400);
     });
 
     it('responds with status 204 and activity has been successfully modified', () => {
